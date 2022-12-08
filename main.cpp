@@ -43,71 +43,54 @@ void input() {
     v[i] = make_pair(x, y);
   }
   sort(v, v + points_num, compare);
+}
+
+bool check(int root, int p1, int p2) {
+  //0 for p2 is more clockwise than p1
+  //1 for p1 is more clockwise than p2
+  if (p1 == -1) {
+    return 0;
+  }
+  if (p2 == -1) {
+    return 1;
+  }
+  int val = (v[p1].second - v[root].second) * (v[p2].first - v[p1].first) - (v[p1].first - v[root].first) * (v[p2].second - v[p1].second);
+
+  return (val >= 0) ? 0 : 1;
+}
+void ans(int point) {
+  if (point == -1) {
+    return;
+  }
+  if (point == 0 && show[point]) {
+    return;
+  }
+  int index = -1;
   for (int i = 0; i < points_num; i++) {
-    cout << v[i].first << " " << v[i].second << endl;
-  }
-}
-
-int findTop(int l, int r, bool left = true) {
-  int maxY = INT_MIN;
-  int index = l;
-  for (int i = l; i < r; i++) {
-    if (v[i].second > maxY || (v[i].second == maxY && ((v[i].first < v[index].first && left == true) || (v[i].first > v[index].first && left == false)))) {
+    if (i == point) {
+      continue;
+    }
+    if (check(point, i, index) && (!show[i])) {
       index = i;
-      maxY = v[i].second;
     }
   }
-  return index;
-}
-
-int findBottom(int l, int r, bool left = true) {
-  int minY = INT_MAX;
-  int index = l;
-  for (int i = l; i < r; i++) {
-    if (v[i].second < minY || (v[i].second == minY && ((v[i].first < v[index].first && left == true) || (v[i].first > v[index].first && left == false)))) {
-      index = i;
-      minY = v[i].second;
-    }
-  }
-  return index;
-}
-
-void merge(int l, int r) {
-  if (l + 1 >= r - 1) {
-    int t1 = findTop(l, r, false);
-    int b1 = findBottom(l, r, false);
-    nextPoint[t1] = b1;
-    nextPoint[b1] = t1;
-    return;
-  }
-  int mid = (l + r) / 2;
-  int t1 = findTop(l, mid, false);
-  int b1 = findBottom(l, mid, false);
-  int t2 = findTop(mid, r, true);
-  int b2 = findBottom(mid, r, true);
-  nextPoint[t1] = t2;
-  nextPoint[b1] = b2;
-}
-
-void ans(int l, int r) {
-  if (l == r - 1) {
-    return;
-  }
-  int mid = (l + r) / 2;
-  ans(l, mid);
-  ans(mid, r);
-  merge(l, r);
+  nextPoint[point] = index;
+  show[index] = true;
+  ans(index);
 }
 
 void findAns() {
-  ans(0, points_num);
+  ans(0);
+
 }
 
 void draw() {
-  int u = findTop(0, points_num, false);
+  cout << "-----------answer-----------"
+  int u = 0;
   int o = u;
   while (nextPoint[u] != o) {
     cout << v[u].first << " " << v[u].second << endl;
     u = nextPoint[u];
   }
+  cout << v[u].first << " " << v[u].second << endl;
 }
