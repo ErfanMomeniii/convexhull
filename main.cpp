@@ -85,7 +85,7 @@ void findAns() {
 }
 
 void draw() {
-  cout << "-----------answer-----------"
+  cout << "-----------answer-----------"<<endl;
   int u = 0;
   int o = u;
   while (nextPoint[u] != o) {
